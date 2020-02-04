@@ -6,6 +6,9 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 import numpy as np
+from collections import Counter 
+import matplotlib.pyplot as plt
+import numpy as np
 
 #import matplotlib.pyplot as plt
 #import matplotlib.patches as patches
@@ -256,3 +259,45 @@ def build_targets(
 def to_categorical(y, num_classes):
     """ 1-hot encodes a tensor """
     return torch.from_numpy(np.eye(num_classes, dtype="uint8")[y])
+
+
+class grapher():
+    def __init__(self,num_batches=83):
+        self.losses = {"x":0, "y":0, "w":0, "h":0, "conf":0, "cls":0,"total":0 ,"recall":0, "precision":0}
+        self.loss_list=[]
+        self.num_batches=num_batches
+
+    def accumlate_losses(self,losses):
+        self.losses=Counter(losses) + Counter(self.losses)
+        self.losses['total']+=losses.item()
+
+    def draw_new_point(self):
+        self.loss_list.append({k:v/self.num_batches for k,v in self.losses.iteritems()})
+        self.losses = {"x":0, "y":0, "w":0, "h":0, "conf":0, "cls":0,"total":0 ,"recall":0, "precision":0}
+        plt.figure(1)
+        plt.ylabel('X Loss')
+        plt.plot([el['x'] for el in self.loss_list])
+        plt.figure(2)
+        plt.ylabel('Y Loss')
+        plt.plot([el['y'] for el in self.loss_list])
+        plt.figure(3)
+        plt.ylabel('W Loss')
+        plt.plot([el['w'] for el in self.loss_list])
+        plt.figure(4)
+        plt.ylabel('H Loss')
+        plt.plot([el['h'] for el in self.loss_list])
+        plt.figure(5)
+        plt.ylabel('conf Loss')
+        plt.plot([el['conf'] for el in self.loss_list])
+        plt.figure(6)
+        plt.ylabel('cls')
+        plt.plot([el['cls'] for el in self.loss_list])
+        plt.figure(7)
+        plt.ylabel('total Loss')
+        plt.plot([el['total'] for el in self.loss_list])
+        plt.figure(8)
+        plt.ylabel('recall')
+        plt.plot([el['recall'] for el in self.loss_list])
+        plt.figure(9)
+        plt.ylabel('precision')
+        plt.plot([el['precision'] for el in self.loss_list])

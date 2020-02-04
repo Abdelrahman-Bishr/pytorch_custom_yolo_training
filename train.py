@@ -65,8 +65,10 @@ model.train()
 
 # Get dataloader
 dataloader = torch.utils.data.DataLoader(
-    ListDataset(train_path), batch_size=opt.batch_size, shuffle=False, num_workers=opt.n_cpu
+    ListDataset(train_path), batch_size=opt.batch_size, shuffle=True, num_workers=opt.n_cpu
 )
+
+drawer= grapher(len(dataloader))
 
 Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
@@ -102,8 +104,11 @@ for epoch in range(opt.epochs):
                 model.losses["precision"],
             )
         )
+        drawer.accumlate_losses(model.losses)
 
         model.seen += imgs.size(0)
+    
+    drawer.draw_new_point()
 
     if epoch % opt.checkpoint_interval == 0:
         model.save_weights("%s/%d.weights" % (opt.checkpoint_dir, epoch))
