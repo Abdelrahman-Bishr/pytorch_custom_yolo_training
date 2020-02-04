@@ -23,7 +23,7 @@ def create_modules(module_defs):
     hyperparams = module_defs.pop(0)
     output_filters = [int(hyperparams["channels"])]
     module_list = nn.ModuleList()
-    for i, module_def in enumerate(module_defs):
+    for i, module_def in enumerate(module_defs):        ## index of dict , list of keys of the dictionary
         modules = nn.Sequential()
 
         if module_def["type"] == "convolutional":
@@ -111,8 +111,8 @@ class YOLOLayer(nn.Module):
         self.ignore_thres = 0.5
         self.lambda_coord = 1
 
-        self.mse_loss = nn.MSELoss(size_average=True)  # Coordinate loss
-        self.bce_loss = nn.BCELoss(size_average=True)  # Confidence loss
+        self.mse_loss = nn.MSELoss(reduction='mean')  # Coordinate loss
+        self.bce_loss = nn.BCELoss(reduction='mean')  # Confidence loss
         self.ce_loss = nn.CrossEntropyLoss()  # Class loss
 
     def forward(self, x, targets=None):
@@ -178,16 +178,22 @@ class YOLOLayer(nn.Module):
                 precision = float(nCorrect / nProposals)
 
             # Handle masks
-            mask = Variable(mask.type(ByteTensor))
-            conf_mask = Variable(conf_mask.type(ByteTensor))
+            mask = mask.type(ByteTensor)
+            conf_mask = conf_mask.type(ByteTensor)
 
             # Handle target variables
-            tx = Variable(tx.type(FloatTensor), requires_grad=False)
-            ty = Variable(ty.type(FloatTensor), requires_grad=False)
-            tw = Variable(tw.type(FloatTensor), requires_grad=False)
-            th = Variable(th.type(FloatTensor), requires_grad=False)
-            tconf = Variable(tconf.type(FloatTensor), requires_grad=False)
-            tcls = Variable(tcls.type(LongTensor), requires_grad=False)
+            tx = tx.type(FloatTensor)
+            tx.requires_grad=False
+            ty = ty.type(FloatTensor)
+            ty.requires_grad=False
+            tw = tw.type(FloatTensor)
+            tw.requires_grad=False
+            th = th.type(FloatTensor)
+            th.requires_grad=False
+            tconf = tconf.type(FloatTensor)
+            tconf.requires_grad=False
+            tcls = tcls.type(LongTensor)
+            tcls.requires_grad=False
 
             # Get conf mask where gt and where there is no gt
             conf_mask_true = mask
@@ -287,6 +293,7 @@ class Darknet(nn.Module):
 
         ptr = 0
         for i, (module_def, module) in enumerate(zip(self.module_defs, self.module_list)):
+        ## index , dictionary , list item
             if module_def["type"] == "convolutional":
                 conv_layer = module[0]
                 if module_def["batch_normalize"]:

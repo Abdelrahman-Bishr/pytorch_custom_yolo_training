@@ -15,7 +15,7 @@ import torch
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision import transforms
-from torch.autograd import Variable
+#from torch.autograd import Variable
 import torch.optim as optim
 
 parser = argparse.ArgumentParser()
@@ -76,8 +76,11 @@ optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters(
 
 for epoch in range(opt.epochs):
     for batch_i, (_, imgs, targets) in enumerate(dataloader):
-        imgs = Variable(imgs.type(Tensor))
-        targets = Variable(targets.type(Tensor), requires_grad=False)
+        imgs = torch.tensor(imgs.type(Tensor))
+        targets = targets.type(Tensor)
+        print(imgs.dtype,'\n\n\n\n\n')
+        print(target.dtype,'\n\n\n\n\n')
+        targets.requires_grad=False
 
         optimizer.zero_grad()
 
