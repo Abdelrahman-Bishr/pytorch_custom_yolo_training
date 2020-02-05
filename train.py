@@ -73,7 +73,7 @@ drawer= grapher(len(dataloader))
 Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
 optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()))
-
+best_score=[0,0,10000000000]
 for epoch in range(opt.epochs):
     for batch_i, (_, imgs, targets) in enumerate(dataloader):
         imgs = imgs.type(Tensor)
@@ -86,30 +86,36 @@ for epoch in range(opt.epochs):
 
         loss.backward()
         optimizer.step()
-        if epoch%5 == 0:
-            print(
-                "[Epoch %d/%d, Batch %d/%d] [Losses: x %f, y %f, w %f, h %f, conf %f, cls %f, total %f, recall: %.5f, precision: %.5f]"
-                % (
-                    epoch,
-                    opt.epochs,
-                    batch_i,
-                    len(dataloader),
-                    model.losses["x"],
-                    model.losses["y"],
-                    model.losses["w"],
-                    model.losses["h"],
-                    model.losses["conf"],
-                    model.losses["cls"],
-                    loss.item(),
-                    model.losses["recall"],
-                    model.losses["precision"],
-                )
-            )
+#        if batch_i%10 == 0:
+#            print(
+#                "[Epoch %d/%d, Batch %d/%d] [Losses: x %f, y %f, w %f, h %f, conf %f, cls %f, total %f, recall: %.5f, precision: %.5f]"
+#                % (
+#                    epoch,
+#                    opt.epochs,
+#                    batch_i,
+#                    len(dataloader),
+#                    model.losses["x"],
+#                    model.losses["y"],
+#                    model.losses["w"],
+#                    model.losses["h"],
+#                    model.losses["conf"],
+#                    model.losses["cls"],
+#                    loss.item(),
+#                    model.losses["recall"],
+#                    model.losses["precision"],
+#                )
+#            )
         drawer.accumlate_losses(model.losses,loss.item())
 
         model.seen += imgs.size(0)
     
     drawer.print_epoch_res()
+    current_score = drawer.get_scores()
+    if current_score[1]>best_score[1] and (current_score[1]+current_score[0])>=(best_score[0]+best_score[1]) and current_score[2]<= 1.2*best_score[2]:
+        print('new best at epoch ',str(epoch))
+        best_score=current_score
+        model.save_weights("%s/best.weights" % opt.checkpoint_dir)
+
 
     if epoch % opt.checkpoint_interval == 0:
         model.save_weights("%s/%d.weights" % (opt.checkpoint_dir, epoch))

@@ -296,6 +296,10 @@ class grapher():
 
 #        self.draw_new_point()
 
+
+    def get_scores(self):
+        return self.loss_list[-1]['recall'],self.loss_list[-1]['precision'],self.loss_list[-1]['total']
+
     def draw_new_point(self):
         plt.figure(1)
         plt.ylabel('X Loss')
