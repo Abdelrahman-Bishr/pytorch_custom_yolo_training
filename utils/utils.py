@@ -200,8 +200,8 @@ def build_targets(
     ty = torch.zeros(nB, nA, nG, nG)
     tw = torch.zeros(nB, nA, nG, nG)
     th = torch.zeros(nB, nA, nG, nG)
-    tconf = torch.ByteTensor(nB, nA, nG, nG).fill_(0)
-    tcls = torch.ByteTensor(nB, nA, nG, nG, nC).fill_(0)
+    tconf = torch.IntTensor(nB, nA, nG, nG).fill_(0)
+    tcls = torch.IntTensor(nB, nA, nG, nG, nC).fill_(0)
 
     nGT = 0
     nCorrect = 0
@@ -263,41 +263,53 @@ def to_categorical(y, num_classes):
 
 class grapher():
     def __init__(self,num_batches=83):
-        self.losses = {"x":0, "y":0, "w":0, "h":0, "conf":0, "cls":0,"total":0 ,"recall":0, "precision":0}
+        self.losses = {"x":0, "y":0, "w":0, "h":0, "conf":0, "cls":0 ,"recall":0, "precision":0}
+        self.total=0
         self.loss_list=[]
         self.num_batches=num_batches
 
-    def accumlate_losses(self,losses):
-        self.losses=Counter(losses) + Counter(self.losses)
-        self.losses['total']+=losses.item()
+    def accumlate_losses(self,losses,total):
+        self.losses=dict(Counter(losses) + Counter(self.losses))
+        self.total+=total
 
     def draw_new_point(self):
-        self.loss_list.append({k:v/self.num_batches for k,v in self.losses.iteritems()})
-        self.losses = {"x":0, "y":0, "w":0, "h":0, "conf":0, "cls":0,"total":0 ,"recall":0, "precision":0}
+        self.loss_list.append({k:v/self.num_batches for k,v in self.losses.items()})
+        self.loss_list[-1]['total']=self.total
+        self.total=0
+        self.losses = {"x":0, "y":0, "w":0, "h":0, "conf":0, "cls":0 ,"recall":0, "precision":0}
         plt.figure(1)
         plt.ylabel('X Loss')
         plt.plot([el['x'] for el in self.loss_list])
+        plt.figure(1).show()
         plt.figure(2)
         plt.ylabel('Y Loss')
         plt.plot([el['y'] for el in self.loss_list])
+        plt.figure(2).show()
         plt.figure(3)
         plt.ylabel('W Loss')
         plt.plot([el['w'] for el in self.loss_list])
+        plt.figure(3).show()
         plt.figure(4)
         plt.ylabel('H Loss')
         plt.plot([el['h'] for el in self.loss_list])
+        plt.figure(4).show()
         plt.figure(5)
         plt.ylabel('conf Loss')
         plt.plot([el['conf'] for el in self.loss_list])
+        plt.figure(5).show()
         plt.figure(6)
         plt.ylabel('cls')
         plt.plot([el['cls'] for el in self.loss_list])
+        plt.figure(6).show()
         plt.figure(7)
         plt.ylabel('total Loss')
         plt.plot([el['total'] for el in self.loss_list])
+        plt.figure(7).show()
         plt.figure(8)
         plt.ylabel('recall')
         plt.plot([el['recall'] for el in self.loss_list])
+        plt.figure(8).show()
         plt.figure(9)
         plt.ylabel('precision')
         plt.plot([el['precision'] for el in self.loss_list])
+        plt.figure(9).show()

@@ -124,7 +124,7 @@ class YOLOLayer(nn.Module):
         # Tensors for cuda support
         FloatTensor = torch.cuda.FloatTensor if x.is_cuda else torch.FloatTensor
         LongTensor = torch.cuda.LongTensor if x.is_cuda else torch.LongTensor
-        ByteTensor = torch.cuda.ByteTensor if x.is_cuda else torch.ByteTensor
+        BoolTensor = torch.cuda.BoolTensor if x.is_cuda else torch.BoolTensor
 
         prediction = x.view(nB, nA, self.bbox_attrs, nG, nG).permute(0, 1, 3, 4, 2).contiguous()
 
@@ -178,8 +178,8 @@ class YOLOLayer(nn.Module):
                 precision = float(nCorrect / nProposals)
 
             # Handle masks
-            mask = mask.type(ByteTensor)
-            conf_mask = conf_mask.type(ByteTensor)
+            mask = mask.type(BoolTensor)
+            conf_mask = conf_mask.type(BoolTensor)
 
             # Handle target variables
             tx = tx.type(FloatTensor)
@@ -197,7 +197,7 @@ class YOLOLayer(nn.Module):
 
             # Get conf mask where gt and where there is no gt
             conf_mask_true = mask
-            conf_mask_false = conf_mask - mask
+            conf_mask_false = conf_mask ^ mask
 
             # Mask outputs to ignore non-existing objects
             loss_x = self.mse_loss(x[mask], tx[mask])

@@ -76,10 +76,8 @@ optimizer = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters(
 
 for epoch in range(opt.epochs):
     for batch_i, (_, imgs, targets) in enumerate(dataloader):
-        imgs = torch.tensor(imgs.type(Tensor))
+        imgs = imgs.type(Tensor)
         targets = targets.type(Tensor)
-        print(imgs.dtype,'\n\n\n\n\n')
-        print(target.dtype,'\n\n\n\n\n')
         targets.requires_grad=False
 
         optimizer.zero_grad()
@@ -107,7 +105,7 @@ for epoch in range(opt.epochs):
                 model.losses["precision"],
             )
         )
-        drawer.accumlate_losses(model.losses)
+        drawer.accumlate_losses(model.losses,loss.item())
 
         model.seen += imgs.size(0)
     
