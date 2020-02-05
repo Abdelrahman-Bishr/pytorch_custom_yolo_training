@@ -86,30 +86,30 @@ for epoch in range(opt.epochs):
 
         loss.backward()
         optimizer.step()
-
-        print(
-            "[Epoch %d/%d, Batch %d/%d] [Losses: x %f, y %f, w %f, h %f, conf %f, cls %f, total %f, recall: %.5f, precision: %.5f]"
-            % (
-                epoch,
-                opt.epochs,
-                batch_i,
-                len(dataloader),
-                model.losses["x"],
-                model.losses["y"],
-                model.losses["w"],
-                model.losses["h"],
-                model.losses["conf"],
-                model.losses["cls"],
-                loss.item(),
-                model.losses["recall"],
-                model.losses["precision"],
+        if epoch%5 == 0:
+            print(
+                "[Epoch %d/%d, Batch %d/%d] [Losses: x %f, y %f, w %f, h %f, conf %f, cls %f, total %f, recall: %.5f, precision: %.5f]"
+                % (
+                    epoch,
+                    opt.epochs,
+                    batch_i,
+                    len(dataloader),
+                    model.losses["x"],
+                    model.losses["y"],
+                    model.losses["w"],
+                    model.losses["h"],
+                    model.losses["conf"],
+                    model.losses["cls"],
+                    loss.item(),
+                    model.losses["recall"],
+                    model.losses["precision"],
+                )
             )
-        )
         drawer.accumlate_losses(model.losses,loss.item())
 
         model.seen += imgs.size(0)
     
-    drawer.draw_new_point()
+    drawer.print_epoch_res()
 
     if epoch % opt.checkpoint_interval == 0:
         model.save_weights("%s/%d.weights" % (opt.checkpoint_dir, epoch))

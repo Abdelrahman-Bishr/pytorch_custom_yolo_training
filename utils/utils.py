@@ -272,44 +272,65 @@ class grapher():
         self.losses=dict(Counter(losses) + Counter(self.losses))
         self.total+=total
 
-    def draw_new_point(self):
+    def print_epoch_res(self):
         self.loss_list.append({k:v/self.num_batches for k,v in self.losses.items()})
-        self.loss_list[-1]['total']=self.total
+        self.loss_list[-1]['total']=self.total/83
+        print(
+            "[Epoch %d] [Losses: x %f, y %f, w %f, h %f, conf %f, cls %f, total %f, recall: %.5f, precision: %.5f]"
+            % (
+                len(self.loss_list),
+                self.loss_list[-1]["x"],
+                self.loss_list[-1]["y"],
+                self.loss_list[-1]["w"],
+                self.loss_list[-1]["h"],
+                self.loss_list[-1]["conf"],
+                self.loss_list[-1]["cls"],
+                self.loss_list[-1]["total"],
+                self.loss_list[-1]["recall"],
+                self.loss_list[-1]["precision"],
+            )
+        )
+
         self.total=0
         self.losses = {"x":0, "y":0, "w":0, "h":0, "conf":0, "cls":0 ,"recall":0, "precision":0}
+
+#        self.draw_new_point()
+
+    def draw_new_point(self):
         plt.figure(1)
         plt.ylabel('X Loss')
-        plt.plot([el['x'] for el in self.loss_list])
+        plt.plot(range(0,len(self.loss_list)),[el['x'] for el in self.loss_list])
         plt.figure(1).show()
         plt.figure(2)
         plt.ylabel('Y Loss')
-        plt.plot([el['y'] for el in self.loss_list])
+        plt.plot(range(0,len(self.loss_list)),[el['y'] for el in self.loss_list])
         plt.figure(2).show()
         plt.figure(3)
         plt.ylabel('W Loss')
-        plt.plot([el['w'] for el in self.loss_list])
+        plt.plot(range(0,len(self.loss_list)),[el['w'] for el in self.loss_list])
         plt.figure(3).show()
         plt.figure(4)
         plt.ylabel('H Loss')
-        plt.plot([el['h'] for el in self.loss_list])
+        plt.plot(range(0,len(self.loss_list)),[el['h'] for el in self.loss_list])
         plt.figure(4).show()
         plt.figure(5)
         plt.ylabel('conf Loss')
-        plt.plot([el['conf'] for el in self.loss_list])
+        plt.plot(range(0,len(self.loss_list)),[el['conf'] for el in self.loss_list])
         plt.figure(5).show()
         plt.figure(6)
         plt.ylabel('cls')
-        plt.plot([el['cls'] for el in self.loss_list])
+        plt.plot(range(0,len(self.loss_list)),[el['cls'] for el in self.loss_list])
         plt.figure(6).show()
         plt.figure(7)
         plt.ylabel('total Loss')
-        plt.plot([el['total'] for el in self.loss_list])
+        plt.plot(range(0,len(self.loss_list)),[el['total'] for el in self.loss_list])
         plt.figure(7).show()
         plt.figure(8)
         plt.ylabel('recall')
-        plt.plot([el['recall'] for el in self.loss_list])
+        plt.plot(range(0,len(self.loss_list)),[el['recall'] for el in self.loss_list])
         plt.figure(8).show()
         plt.figure(9)
         plt.ylabel('precision')
-        plt.plot([el['precision'] for el in self.loss_list])
+        plt.plot(range(0,len(self.loss_list)),[el['precision'] for el in self.loss_list])
         plt.figure(9).show()
+        plt.show()
