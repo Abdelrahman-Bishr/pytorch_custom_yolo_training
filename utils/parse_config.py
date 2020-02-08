@@ -18,7 +18,7 @@ def parse_model_config(path):
             value = value.strip()
             module_defs[-1][key.rstrip()] = value.strip()
 
-    return module_defs
+    return module_defs      ''' a list of dictionaries , every dictionary is for a layer'''
 
 def parse_data_config(path):
     """Parses the data configuration file"""

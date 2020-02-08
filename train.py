@@ -26,6 +26,7 @@ parser.add_argument("--model_config_path", type=str, default="config/yolov3.cfg"
 parser.add_argument("--data_config_path", type=str, default="config/coco.data", help="path to data config file")
 parser.add_argument("--weights_path", type=str, default="config/yolov3.weights", help="path to weights file")
 parser.add_argument("--class_path", type=str, default="config/coco.names", help="path to class label file")
+parser.add_argument("--log_path", type=str, default="", help="path to log file to record output")
 parser.add_argument("--conf_thres", type=float, default=0.8, help="object confidence threshold")
 parser.add_argument("--nms_thres", type=float, default=0.4, help="iou thresshold for non-maximum suppression")
 parser.add_argument("--n_cpu", type=int, default=0, help="number of cpu threads to use during batch generation")
@@ -68,7 +69,7 @@ dataloader = torch.utils.data.DataLoader(
     ListDataset(train_path), batch_size=opt.batch_size, shuffle=True, num_workers=opt.n_cpu
 )
 
-drawer= grapher(len(dataloader))
+drawer= grapher(len(dataloader),opt.log_path)
 
 Tensor = torch.cuda.FloatTensor if cuda else torch.FloatTensor
 
@@ -114,7 +115,7 @@ for epoch in range(opt.epochs):
     if current_score[1]>best_score[1] and (current_score[1]+current_score[0])>=(best_score[0]+best_score[1]) and current_score[2]<= 1.2*best_score[2]:
         print('new best at epoch ',str(epoch))
         best_score=current_score
-        model.save_weights("%s/best.weights" % opt.checkpoint_dir)
+        model.save_weights("%sbest.weights" % opt.checkpoint_dir)
 
 
     if epoch % opt.checkpoint_interval == 0:
