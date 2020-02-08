@@ -276,7 +276,7 @@ class grapher():
     def print_epoch_res(self):
         self.loss_list.append({k:v/self.num_batches for k,v in self.losses.items()})
         self.loss_list[-1]['total']=self.total/83
-        txt="[Epoch %d] [Losses: x %f, y %f, w %f, h %f, conf %f, cls %f, total %f, recall: %.5f, precision: %.5f]"
+        txt="[Epoch %d] [Losses: x %f, y %f, w %f, h %f, conf %f, cls %f, total %f, recall: %.5f, precision: %.5f]"\
             % (
                 len(self.loss_list),
                 self.loss_list[-1]["x"],
