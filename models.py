@@ -324,6 +324,10 @@ class Darknet(nn.Module):
                     ptr += num_b
                 # Load conv. weights
                 num_w = conv_layer.weight.numel()
+                print(num_w)
+                print(torch.from_numpy(weights[ptr : ptr + num_w]).shape)
+                print(conv_layer.weight)
+                print('\n\n\n\n')
                 conv_w = torch.from_numpy(weights[ptr : ptr + num_w]).view_as(conv_layer.weight)
                 conv_layer.weight.data.copy_(conv_w)
                 ptr += num_w
