@@ -50,6 +50,7 @@ class ListDataset(Dataset):
     def __init__(self, list_path, img_size=416):
         with open(list_path, 'r') as file:
             self.img_files = file.readlines()
+        self.label_files=[]
         if('test_images' in self.img_files[0]):
             self.label_files = [path.replace('test_images', 'test_labels').replace('.jpg', '.txt') for path in self.img_files]
             self.img_files = [path.replace('test_images', 'images') for path in self.img_files]

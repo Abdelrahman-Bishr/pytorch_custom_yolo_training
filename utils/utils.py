@@ -275,7 +275,7 @@ class grapher():
 
     def print_epoch_res(self):
         self.loss_list.append({k:v/self.num_batches for k,v in self.losses.items()})
-        self.loss_list[-1]['total']=self.total/83
+        self.loss_list[-1]['total']=self.total/self.num_batches
         txt="[Epoch %d] [Losses: x %f, y %f, w %f, h %f, conf %f, cls %f, total %f, recall: %.5f, precision: %.5f]"\
             % (
                 len(self.loss_list),
@@ -297,7 +297,7 @@ class grapher():
         self.total=0
         self.losses = {"x":0, "y":0, "w":0, "h":0, "conf":0, "cls":0 ,"recall":0, "precision":0}
 
-        self.draw_new_point()
+#        self.draw_new_point()
 
     def get_scores(self):
         return self.loss_list[-1]['recall'],self.loss_list[-1]['precision'],self.loss_list[-1]['total']
