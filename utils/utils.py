@@ -292,6 +292,8 @@ class grapher():
         print(txt)
         if self.log_path != "":
             self.log = open(self.log_path,'a')
+            if len(self.loss_list) <= 1:
+                self.log.write('='*124+'\n')    
             self.log.write(txt+'\n')
             self.log.close()
         self.total=0
